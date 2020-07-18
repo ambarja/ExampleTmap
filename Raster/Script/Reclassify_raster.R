@@ -1,20 +1,36 @@
+# Installing some packages necessary 
+pkgs <- c('raster', 'tmap', 'cptcity','tidyverse')
+install.packages(pkgs)
+
+# Activate or calling installed packages 
 library(raster)
 library(tmap)
 library(cptcity)
+library(tidyverse)
+
 # reading a raster
+dem <- raster('../Data/DEM.gpkg')
 
-dem <- raster('dem_01.tif')
-class <- c(-Inf, 100 , 1,
-            100, 150 , 2,
-            150, 250 , 3,
-            250, Inf ,4)
+# definition some class for raster 
+class <- c( -Inf, 3000 , 1,
+            3000, 3500 , 2,
+            3500, 4000 , 3,
+            4000, Inf  , 4)
+class %>%
+  matrix(ncol = 3,byrow = T) -> m_class
 
-m_class <- matrix(new_class,ncol = 3,byrow = T)
-r_class <- raster::reclassify(dem, m_class)
-r_class <- as.factor(r_class)
+dem %>% 
+  reclassify(m_class) %>% 
+  as.factor() -> r_class
+
 levels(r_class)[[1]]$names <- c('very low','low',
                                 'medium','high')
-tm_shape(r_class) + 
-  tm_raster(palette = cpt(pal = 'grass_bcyr',n = 4))
-
-
+# Map with rater layer 
+r_class %>% 
+tm_shape() + 
+  tm_raster(palette = cpt(pal = 'grass_bcyr',
+                          n = 4),
+            legend.hist = TRUE) +
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE)
+  
