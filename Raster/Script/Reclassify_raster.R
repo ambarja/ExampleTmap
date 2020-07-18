@@ -32,5 +32,11 @@ tm_shape() +
                           n = 4),
             legend.hist = TRUE) +
   tm_layout(frame = FALSE,
-            legend.outside = TRUE)
-  
+            legend.outside = TRUE) -> map
+
+# Export map 
+tmap_save(tm = map,
+          filename = '../Map/reclass_raster.png',
+          width = 10,
+          height = 5)
+
